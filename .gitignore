@@ -1,0 +1,8 @@
+// compiled files
+
+dist/
+.sass-cache/
+
+// installed components
+
+node_modules/
