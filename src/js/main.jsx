@@ -1,4 +1,4 @@
 var React = require('react');
-var Greeting = require('./Test.jsx');
+var Test = require('./Test.jsx');
 
-React.render(<Greeting />, document.getElementById('main'));
+React.render(<Test />, document.getElementById('main'));

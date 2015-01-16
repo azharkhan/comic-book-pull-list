@@ -1,13 +1,30 @@
 /** @jsx React.DOM */
 var React = require('react');
+var request = require('superagent');
 
-var Greeting = React.createClass({
-    displayName: 'Greeting',
+var Test = React.createClass({
+    displayName: 'Test',
+    getInitialState: function() {
+      return {
+        code: '<empty></empty>'
+      };
+    },
+    loadExample: function() {
+      request.get('./example.json')
+        .end(function(res) {
+          this.setState({ code: res.body });
+        }.bind(this));
+    },
+    componentWillMount: function() {
+      this.loadExample();
+    },
     render: function () {
         return (
-            <h1>Hello, this is a React module!</h1>
+            <pre>
+              <code>{this.state.code}</code>
+            </pre>
         );
     }
 });
 
-module.exports = Greeting;
+module.exports = Test;
