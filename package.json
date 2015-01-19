@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "description": "'A quick look at which comic books will be eating up your money next week'",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/azharkhan/comic-book-pull-list"
+    "type": "git",
+    "url": "https://github.com/azharkhan/comic-book-pull-list"
   },
   "main": "index.html",
   "scripts": {
@@ -23,6 +23,7 @@
     "gulp": "^3.8.10",
     "gulp-ruby-sass": "^0.7.1",
     "gulp-sass": "^1.3.1",
+    "lodash": "^2.4.1",
     "react": "^0.12.2",
     "reactify": "^0.17.1",
     "superagent": "^0.21.0",
