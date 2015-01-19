@@ -1,4 +1,4 @@
 var React = require('react');
-var Test = require('./Test.jsx');
+var ComicList = require('./ComicList.jsx');
 
-React.render(<Test />, document.getElementById('main'));
+React.render(<ComicList />, document.getElementById('main'));
