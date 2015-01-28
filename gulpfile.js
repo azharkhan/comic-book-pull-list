@@ -6,6 +6,7 @@ var del = require('del');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var reactify = require('reactify');
+var filter = require('gulp-filter');
 
 // paths
 
@@ -13,7 +14,7 @@ var paths = {
   sass: ['./src/sass/**/*.sass'],
   js: ['./src/js/**/*.js'],
   jsx: ['./src/js/**/*.jsx'],
-  html: ['./src/**/*.html'],
+  html: ['./src/**/*.html', './index.html'],
   main: ['./src/js/main.jsx'],
   bundle: './app.js'
 };
@@ -36,8 +37,9 @@ gulp.task('browser-sync', function() {
 // sass task, runs when any sass files change
 gulp.task('sass', function() {
   return gulp.src(paths.sass)
-          .pipe(sass())
+          .pipe(sass({sourcemap: true, sourcemapPath: './src/sass'}))
           .pipe(gulp.dest('./dist/css'))
+          .pipe(filter('**/*.css'))
           .pipe(reload({ stream: true }));
 });
 
@@ -59,7 +61,7 @@ gulp.task('js', ['clean'], function() {
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.jsx, ['js', reload]);
-  gulp.watch([paths.html, './index.html'], reload);
+  gulp.watch(paths.html, reload);
 });
 
 // default task to be run with `gulp`
