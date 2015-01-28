@@ -37,7 +37,7 @@ gulp.task('browser-sync', function() {
 // sass task, runs when any sass files change
 gulp.task('sass', function() {
   return gulp.src(paths.sass)
-          .pipe(sass({sourcemap: true, sourcemapPath: './src/sass'}))
+          .pipe(sass({sourcemap: true, sourcemapPath: './src/sass', loadPath: require('node-bourbon').includePaths }))
           .pipe(gulp.dest('./dist/css'))
           .pipe(filter('**/*.css'))
           .pipe(reload({ stream: true }));
