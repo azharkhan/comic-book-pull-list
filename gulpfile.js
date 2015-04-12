@@ -9,6 +9,11 @@ var reactify = require('reactify');
 var filter = require('gulp-filter');
 var nodemon = require('gulp-nodemon');
 var runSequence = require('run-sequence');
+var sourcemaps = require('gulp-sourcemaps');
+
+// we'd need a slight delay to reload browsers
+// connected to browser-sync after restarting nodemon
+var BROWSER_SYNC_RELOAD_DELAY = 500;
 
 
 // paths
@@ -25,27 +30,19 @@ gulp.task('clean', function(done) {
   del(['public'], done);
 });
 
-// server
-gulp.task('server', function() {
-  browserSync({
-    server: {
-      baseDir: "./"
-    }
-  });
-});
-
 // sass task, runs when any sass files change
 gulp.task('styles', function() {
-  return gulp.src(paths.sass)
-          .pipe(sass({sourcemap: true, sourcemapPath: './styles', loadPath: require('node-bourbon').includePaths }))
+  return sass('./styles/', { sourcemap: true, loadPath: require('node-bourbon').includePaths})
+          .on('error', function (err) {
+            console.error('Error!', err.message);
+          })
           .pipe(gulp.dest('./public/'))
-          .pipe(filter('**/*.css'))
           .pipe(reload({ stream: true }));
 });
 
 // js task, compiles all jsx files and browserify
 
-gulp.task('scripts', ['clean'], function() {
+gulp.task('scripts', function() {
   return browserify({
             entries: paths.main,
             debug: true,
@@ -61,7 +58,9 @@ gulp.task('scripts', ['clean'], function() {
 
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['styles']);
-  gulp.watch(paths.jsx, ['scripts', reload]);
+  gulp.watch(paths.js, function() {
+    runSequence('scripts', reload);
+  });
   // gulp.watch(paths.html, reload);
 });
 
@@ -75,21 +74,38 @@ gulp.task('build', ['clean', 'styles', 'scripts'], function() {
   console.log('Build completed.');
 });
 
+
+
 // nodemon
 
-gulp.task('daemon', function() {
-  nodemon({
-    script: 'server.js',
-    ext: 'js',
-    env: {
-      'NODE_ENV': 'development'
-    }
+gulp.task('nodemon', function(cb) {
+  var called = false;
+  return nodemon({
+    script: 'server.js'
   })
-    .on('start', ['watch'])
-    .on('change', ['watch'])
-    .on('restart', function () {
-      console.log('restarted server...');
+    .on('start', function onStart() {
+      // ensure start called only once
+      if (!called) { cb(); }
+      called = true;
+    })
+    .on('restart', function onRestart() {
+      console.log('restarting server...');
+      setTimeout(function reload() {
+        browserSync.reload({
+          stream: false
+        });
+      }, BROWSER_SYNC_RELOAD_DELAY);
     });
+});
+
+// server
+gulp.task('server', ['nodemon'], function() {
+  browserSync.init({
+    files: ['public/**/*.*'],
+    proxy: "localhost:5000",
+    port: 4000,
+    notify: true
+  });
 });
 
 gulp.task('default', function() {
@@ -97,7 +113,8 @@ gulp.task('default', function() {
     'clean',
     'styles',
     'scripts',
-    'daemon'
+    'server',
+    'watch'
   );
 
 });

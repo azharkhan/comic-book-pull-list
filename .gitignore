@@ -1,6 +1,6 @@
 # compiled files
 
-dist/
+public/*
 .sass-cache/
 
 # installed components
