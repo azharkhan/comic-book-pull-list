@@ -4,7 +4,7 @@ var express = require('express');
 var app = express();
 
 // include the JSX transpiler
-require('node-jsx').install();
+require('node-jsx').install({extension: '.jsx'});
 
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -25,11 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.engine('handlebars', handlebars({ defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-// setup basic page
+// set routes
 
-app.get('/', function(req, res) {
-	res.render('home');
-});
+require('./app/routes/routes.js')(app);
 
 app.listen(port);
 
