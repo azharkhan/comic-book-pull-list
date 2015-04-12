@@ -8,6 +8,17 @@ html, body
     flex-flow: row wrap
     justify-content: space-around
 
+    .publishers-list
+        display: flex
+        flex-flow: row wrap
+        justify-content: flex-start
+        > span
+            margin: em(5)
+            font-weight: 600
+
+            &:hover
+                text-decoration: underline
+
     .publisher
         display: flex
         flex-flow: column wrap
