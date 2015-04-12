@@ -16,7 +16,7 @@ var paths = {
   jsx: ['./src/js/**/*.jsx'],
   html: ['./src/**/*.html', './index.html'],
   main: ['./src/js/main.jsx'],
-  bundle: './app.js'
+  bundle: './app/main.js'
 };
 
 // clean compiled files
@@ -26,7 +26,7 @@ gulp.task('clean', function(done) {
 });
 
 // server
-gulp.task('browser-sync', function() {
+gulp.task('server', function() {
   browserSync({
     server: {
       baseDir: "./"
@@ -35,36 +35,36 @@ gulp.task('browser-sync', function() {
 });
 
 // sass task, runs when any sass files change
-gulp.task('sass', function() {
+gulp.task('styles', function() {
   return gulp.src(paths.sass)
           .pipe(sass({sourcemap: true, sourcemapPath: './src/sass', loadPath: require('node-bourbon').includePaths }))
-          .pipe(gulp.dest('./dist/css'))
+          .pipe(gulp.dest('./public/'))
           .pipe(filter('**/*.css'))
           .pipe(reload({ stream: true }));
 });
 
 // js task, compiles all jsx files and browserify
 
-gulp.task('js', ['clean'], function() {
+gulp.task('scripts', ['clean'], function() {
   return browserify({
             entries: paths.main,
-            debug: true
+            debug: true,
+            transform: [reactify]
           })
-          .transform(reactify)
           .bundle()
           .pipe(source(paths.bundle))
-          .pipe(gulp.dest('./dist/js'));
+          .pipe(gulp.dest('./public/'));
 });
 
 // watch task
 
 gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
-  gulp.watch(paths.jsx, ['js', reload]);
+  gulp.watch(paths.sass, ['styles']);
+  gulp.watch(paths.jsx, ['scripts', reload]);
   gulp.watch(paths.html, reload);
 });
 
 // default task to be run with `gulp`
-gulp.task('default', ['clean', 'sass', 'js', 'browser-sync', 'watch'], function() {
+gulp.task('default', ['clean', 'styles', 'scripts', 'server', 'watch'], function() {
 });
 
