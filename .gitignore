@@ -11,3 +11,7 @@ node_modules/
 
 *.sublime-project
 *.sublime-workspace
+
+# useless files?
+
+*.DS_Store
