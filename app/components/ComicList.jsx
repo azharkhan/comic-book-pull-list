@@ -6,25 +6,52 @@ var Publisher = require('./Publisher.jsx');
 
 var ComicList = React.createClass({
     displayName: 'ComicList',
-    // getInitialState: function() {
-    //   console.log('data: ', this.props.data);
-    //   return {
-    //     data: this.props.data
-    //   };
-    // },
+    
+    getInitialState: function() {
+      return {
+        data: this.props.data
+      };
+    },
+    
+    handleChange: function(e) {
+      var selected = e.target.value;
+      var selectedPublisher = _.filter(this.props.data.publishers, { 'name': selected });
+
+      if (!selected) {
+        this.setState({ data: this.props.data });
+      }
+      else {
+        this.setState({ data: { publishers: selectedPublisher } });
+      }
+    },
+    
     render: function () {
-      var publishers = _.map(this.props.data.publishers, function(publisher) {
+      var publishers = _.map(this.state.data.publishers, function(publisher) {
         return (
           <Publisher publisher={publisher}></Publisher>
         );
       });
 
       var publisherNames = _.pluck(this.props.data.publishers, 'name');
+      var publisherOptions = _.map(publisherNames, function(name) {
+        return (<option value={name}>{name}</option>);
+      });
+
 
       return (
-        <div className="comics-list">
-        <div className="publishers-list">{publisherNames}</div>
-          {publishers}
+        <div className="container--comics">
+          <form name="publisher-select">
+            <label>Select Publisher: </label>
+            <div className="styled-select">
+              <select defaultValue="" onChange={this.handleChange}>
+                <option value="">All</option>
+                {publisherOptions}
+              </select>
+            </div>
+          </form>
+          <div className="comics-list">
+            {publishers}
+          </div>
         </div>
       );
     }

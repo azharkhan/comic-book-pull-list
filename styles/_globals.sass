@@ -3,21 +3,26 @@ html, body
     padding: 0
     font-size: 16px
 
+form[name="publisher-select"]
+    margin-left: em(20)
+    margin-top: em(15)
+
+.styled-select
+    border: 1px solid #ccc
+    display: inline
+    border-radius: 4px
+    padding: em(5)
+    overflow: hidden
+    > select
+        border: none
+        box-shadow: none
+        background: transparent
+
 .comics-list
+    margin: em(20)
     display: flex
     flex-flow: row wrap
     justify-content: space-around
-
-    .publishers-list
-        display: flex
-        flex-flow: row wrap
-        justify-content: flex-start
-        > span
-            margin: em(5)
-            font-weight: 600
-
-            &:hover
-                text-decoration: underline
 
     .publisher
         display: flex
