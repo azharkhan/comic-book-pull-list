@@ -1,8 +1,3 @@
-html, body
-    margin: 0
-    padding: 0
-    font-size: 16px
-
 form[name="publisher-select"]
     margin-left: em(20)
     margin-top: em(15)
@@ -21,6 +16,7 @@ form[name="publisher-select"]
 .comics-list
     margin: em(20)
     display: flex
+    display: -webkit-flex
     flex-flow: row wrap
     justify-content: space-around
 
@@ -30,7 +26,6 @@ form[name="publisher-select"]
 
         > img
             width: 10%
-            height: 100%
 
         .publisher-issues
             display: flex
