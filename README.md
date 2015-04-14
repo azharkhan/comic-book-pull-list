@@ -7,7 +7,8 @@ An app that shows you upcoming comics from your pull-list (subscriptions) for a 
 * React
 * Browserify
 * Gulp
-* ...
+* NodeJS (Back-end)
+* Redis (Caching)
 
 ## Sources
 
