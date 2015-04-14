@@ -4,20 +4,18 @@ var ComicList = React.createFactory(require('../components/ComicList.jsx'));
 // get required libraries
 var moment = require('moment');
 var request = require('request');
+var crypto = require('crypto');
 // create redis connection
 var redis = require('redis');
 var client = redis.createClient();
+
+var SOURCE_URL = 'http://freshcomics.us/comics/';
 
 /**
 * hashing function source: http://jsperf.com/hashing-strings
 */
 function _hashString(string) {
-	var result = 0,
-		len = string.length;
-	for(var i=0; i < len; i++) {
-		result = result * 31 + string.charCodeAt(i);
-	}
-	return result;
+	return crypto.createHash('md5').update(string).digest('hex');
 }
 
 // fetch data from FreshComics if not in redis
@@ -35,15 +33,8 @@ function _getDataFromSource(url, key, callback) {
 	});
 }
 
-function _fetchDataForRender(request, response, callback) {
-	// find the upcoming wednesday
-	var wednesday = moment().day("Wednesday");
-	var url = 'http://freshcomics.us/comics/' + wednesday.format('YYYY-MM-DD') + '/json';
-	// hash the url to a key for Redis
-	var key = _hashString(url).toString();
-
-	// get data from redis
-
+function _checkRedisForData(key, url, callback) {
+	// check if data exists for key in redis
 	client.get(key, function(err, reply) {
 		if(err) {
 			return callback(err);
@@ -57,6 +48,14 @@ function _fetchDataForRender(request, response, callback) {
 		console.log('no data in redis, get from url');
 		_getDataFromSource(url, key, callback);
 	});
+
+}
+
+function _fetchDataForRender(request, response, url, key, callback) {
+
+	// check if data in Redis, if not, get from URL
+
+	_checkRedisForData(key, url, callback);
 }
 
 // define routes for the app
@@ -74,7 +73,13 @@ module.exports = function(app) {
 	});
 
 	app.get('/', function(req, res) {
-		_fetchDataForRender(req, res, function(err, data) {
+		// find the upcoming wednesday
+		var wednesday = moment().day("Wednesday");
+		var url = SOURCE_URL + wednesday.format('YYYY-MM-DD') + '/json';
+		// hash the url to a key for Redis
+		var key = _hashString(url).toString();
+
+		_fetchDataForRender(req, res, url, key, function(err, data) {
 			if(err) {
 				console.log('error! ' + err);
 			}
@@ -84,8 +89,22 @@ module.exports = function(app) {
 		});
 	});
 
-	// app.get('/:date', function(req, res) {
+	app.get('/:date', function(req, res) {
+		var date = moment(req.params.date);
+		var url = SOURCE_URL + date.format('YYYY-MM-DD') + '/json';
+		var key = _hashString(url).toString();
 
-	// });
+		_fetchDataForRender(req, res, url, key, function(err, data) {
+			if(err) {
+				console.log('error! ' + err);
+			}
+			var props = { data: JSON.parse(data) };
+			var comicListHtml = React.renderToString(ComicList(props));
+			res.render('home', { comicList: comicListHtml, props: JSON.stringify(props) });
+		});
+
+
+
+	});
 
 };
