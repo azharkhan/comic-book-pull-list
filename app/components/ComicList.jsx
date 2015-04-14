@@ -3,6 +3,7 @@
 var React = require('react');
 var _ = require('lodash');
 var Publisher = require('./Publisher.jsx');
+var moment = require('moment');
 
 var ComicList = React.createClass({
     displayName: 'ComicList',
@@ -37,9 +38,13 @@ var ComicList = React.createClass({
         return (<option value={name}>{name}</option>);
       });
 
+      var week = moment(this.props.data.week).format('[Week of] MMMM Do YYYY');
+
+
 
       return (
         <div className="container--comics">
+          <h3 className="comics-date">{week}</h3>
           <form name="publisher-select">
             <label>Select Publisher: </label>
             <div className="styled-select">
