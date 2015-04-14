@@ -35,12 +35,14 @@
     "path": "^0.11.14",
     "react": "^0.12.2",
     "reactify": "^0.17.1",
+    "redis": "^0.12.1",
     "request": "^2.55.0",
     "run-sequence": "^1.0.2",
     "superagent": "^0.21.0",
     "vinyl-source-stream": "^1.0.0"
   },
   "devDependencies": {
-    "node-jsx": "^0.12.4"
+    "node-jsx": "^0.12.4",
+    "node-redis": "^0.1.7"
   }
 }
