@@ -2,7 +2,7 @@
 
 var React = require('react');
 var _ = require('lodash');
-var Publisher = require('./Publisher.jsx');
+var Comic = require('./Comic.jsx');
 var moment = require('moment');
 
 var ComicList = React.createClass({
@@ -10,27 +10,51 @@ var ComicList = React.createClass({
     
     getInitialState: function() {
       return {
-        data: this.props.data
+        issues: this.extractIssuesFromPublisherData(),
+        filter: null
       };
+    },
+
+    extractIssuesFromPublisherData: function() {
+      return _.flatten(_.pluck(this.props.data.publishers, 'issues'));
     },
     
     handleChange: function(e) {
+      var allIssues = this.extractIssuesFromPublisherData();
       var selected = e.target.value;
-      var selectedPublisher = _.filter(this.props.data.publishers, { 'name': selected });
 
-      if (!selected) {
-        this.setState({ data: this.props.data });
+      if(selected) {
+        var filteredIssues = _.filter(allIssues, { 'publisher': selected });
+        this.setState({ issues: filteredIssues });
       }
       else {
-        this.setState({ data: { publishers: selectedPublisher } });
+        this.setState({ issues: allIssues });
+      }
+    },
+
+    filterList: function(e) {
+      var allIssues = this.extractIssuesFromPublisherData();
+      var text = e.target.value;
+
+      if(!text || !text.length) {
+        // if no text supplied, show full list
+        this.setState({ issues: allIssues, filter: null });
+      }
+
+      if(text.length >= 3) {
+        var matches = _.filter(allIssues, function(issue) {
+          return _.contains(issue.series.toLowerCase(), text);
+        });
+      }
+
+      if(matches && matches.length) {
+        this.setState({ issues: matches, filter: text });
       }
     },
     
     render: function () {
-      var publishers = _.map(this.state.data.publishers, function(publisher) {
-        return (
-          <Publisher publisher={publisher}></Publisher>
-        );
+      var comics = _.map(this.state.issues, function(issue) {
+        return (<Comic comic={issue}></Comic>);
       });
 
       var publisherNames = _.pluck(this.props.data.publishers, 'name');
@@ -39,8 +63,6 @@ var ComicList = React.createClass({
       });
 
       var week = moment(this.props.data.week).format('[Week of] MMMM Do YYYY');
-
-
 
       return (
         <div className="container--comics">
@@ -53,9 +75,10 @@ var ComicList = React.createClass({
                 {publisherOptions}
               </select>
             </div>
+            <input type="text" placeholder="Search for Comic... " onChange={this.filterList} />
           </form>
           <div className="comics-list">
-            {publishers}
+            {comics}
           </div>
         </div>
       );

@@ -102,9 +102,6 @@ module.exports = function(app) {
 			var comicListHtml = React.renderToString(ComicList(props));
 			res.render('home', { comicList: comicListHtml, props: JSON.stringify(props) });
 		});
-
-
-
 	});
 
 };
