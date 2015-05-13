@@ -32,6 +32,8 @@
     "lodash": "^2.4.1",
     "moment": "^2.10.2",
     "node-bourbon": "^1.2.3",
+    "parse": "^1.4.2",
+    "parse-react": "^0.2.4",
     "path": "^0.11.14",
     "react": "^0.12.2",
     "reactify": "^0.17.1",
