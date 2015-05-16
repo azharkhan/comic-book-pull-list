@@ -16,6 +16,17 @@ var App = React.createClass({
     extractIssuesFromPublisherData: function() {
     	return _.flatten(_.pluck(this.props.data.publishers, 'issues'));
     },
+    filterByPublisher: function( publisher ) {
+        console.log('publisher: ', publisher);
+        var allIssues = this.extractIssuesFromPublisherData();
+
+        if (!publisher.length) {
+            this.setState({ issues: allIssues });    
+        } else {
+            var filteredIssues = _.filter( allIssues, { 'publisher': publisher });
+            this.setState({ issues: filteredIssues });
+        }
+    },
     render: function() {
         var publisherNames = _.pluck(this.props.data.publishers, 'name');
         var week = moment(this.props.data.week).format('[Week of] MMMM Do YYYY');
@@ -24,7 +35,8 @@ var App = React.createClass({
             <div id="app">
             	<Nav></Nav>
                 <h3 className="comics-date">{week}</h3>
-            	<ComicList issues={this.state.issues} publishers={publisherNames}></ComicList>
+            	<ComicList issues={this.state.issues} publishers={publisherNames}
+                    filterByPublisher={this.filterByPublisher}></ComicList>
             </div>
         );
     }

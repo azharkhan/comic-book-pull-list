@@ -8,29 +8,10 @@ var moment = require('moment');
 var ComicList = React.createClass({
     displayName: 'ComicList',
     
-    // getInitialState: function() {
-    //   return {
-    //     issues: this.extractIssuesFromPublisherData(),
-    //     filter: null
-    //   };
-    // },
-
-    // extractIssuesFromPublisherData: function() {
-    //   return _.flatten(_.pluck(this.props.data.publishers, 'issues'));
-    // },
-    
-    // handleChange: function(e) {
-    //   var allIssues = this.extractIssuesFromPublisherData();
-    //   var selected = e.target.value;
-
-    //   if(selected) {
-    //     var filteredIssues = _.filter(allIssues, { 'publisher': selected });
-    //     this.setState({ issues: filteredIssues });
-    //   }
-    //   else {
-    //     this.setState({ issues: allIssues });
-    //   }
-    // },
+    handleChange: function(e) {
+        var selected = e.target.value;
+        this.props.filterByPublisher( selected );
+    },
 
     // filterList: function(e) {
     //   var allIssues = this.extractIssuesFromPublisherData();
