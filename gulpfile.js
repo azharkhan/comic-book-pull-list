@@ -21,7 +21,7 @@ var BROWSER_SYNC_RELOAD_DELAY = 500;
 var paths = {
   sass: ['./styles/**/*.sass'],
   js: ['./app/components/**/*.js', './app/components/**/*.jsx'],
-  main: './app/main.js'
+  client: './app/client.js'
 };
 
 // clean compiled files
@@ -44,13 +44,13 @@ gulp.task('styles', function() {
 
 gulp.task('scripts', function() {
   return browserify({
-            entries: paths.main,
+            entries: paths.client,
             debug: true,
             paths: ['./node_modules','./app/components/'],
             transform: [reactify]
           })
           .bundle()
-          .pipe(source('main.js'))
+          .pipe(source('client.js'))
           .pipe(gulp.dest('./public/'));
 });
 

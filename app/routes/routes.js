@@ -1,6 +1,6 @@
 // get required components
 var React = require('react');
-var ComicList = React.createFactory(require('../components/ComicList.jsx'));
+var App = React.createFactory(require('../components/App.jsx'));
 // get required libraries
 var moment = require('moment');
 var request = require('request');
@@ -54,7 +54,7 @@ function _checkRedisForData(key, url, callback) {
 function _fetchDataForRender(request, response, url, key, callback) {
 
 	// check if data in Redis, if not, get from URL
-
+	console.log('fetching data for render');
 	_checkRedisForData(key, url, callback);
 }
 
@@ -84,12 +84,12 @@ module.exports = function(app) {
 				console.log('error! ' + err);
 			}
 			var props = { data: JSON.parse(data) };
-			var comicListHtml = React.renderToString(ComicList(props));
-			res.render('home', { comicList: comicListHtml, props: JSON.stringify(props) });
+			var appMarkup = React.renderToString(App(props));
+			res.render('home', { app: appMarkup, props: JSON.stringify(props) });
 		});
 	});
 
-	app.get('/:date', function(req, res) {
+	app.get('date/:date', function(req, res) {
 		var date = moment(req.params.date);
 		var url = SOURCE_URL + date.format('YYYY-MM-DD') + '/json';
 		var key = _hashString(url).toString();
@@ -99,8 +99,8 @@ module.exports = function(app) {
 				console.log('error! ' + err);
 			}
 			var props = { data: JSON.parse(data) };
-			var comicListHtml = React.renderToString(ComicList(props));
-			res.render('home', { comicList: comicListHtml, props: JSON.stringify(props) });
+			var appMarkup = React.renderToString(App(props));
+			res.render('home', { app: appMarkup, props: JSON.stringify(props) });
 		});
 	});
 
